@@ -17,24 +17,13 @@ import java.util.Map;
 
 @WebServlet("/searchResults")
 public class searchServlet extends HttpServlet {
-    private static final Log log = LogFactory.getLog(searchServlet.class);
 
     private final searchEngine searchEngine = new searchEngine();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String searchResult = (String) request.getParameter("searchInput");
 
-        log.info("Search result: " + searchResult);
-
-        // Use HashMap specifically
-        HashMap<String, List<String>> results = searchEngine.getItemsFromDB(searchResult);
-
-        log.info("Size of the HashMap: " + results.size());
-
-        for (Map.Entry<String, List<String>> entry : results.entrySet()) {
-            log.info("Key: " + entry.getKey());
-            log.info("Values: " + entry.getValue());
-        }
+        HashMap<String, HashMap<String, String>> results = searchEngine.getItemsFromDB(searchResult);
 
         request.setAttribute("dataMap", results);
         request.getRequestDispatcher("results.jsp").forward(request, response);

@@ -5,24 +5,26 @@ import com.zeusyohaan.DependencyInjector.Injector;
 import java.util.*;
 public class searchEngine {
     SqlData sqlData = Injector.buildVegDataSQL();
-    public List<String> searchItem(List<vegData> dataList, String item){
-        List<String> results = new ArrayList<>();
+    public HashMap<String, String> searchItem(List<vegData> dataList, String item){
+        HashMap<String, String> results = new HashMap<>();
         for(vegData element : dataList){
-            String elements = element.getTitle();
-            if(elements.toLowerCase().contains(item.toLowerCase())){
-                results.add(elements);
+            String elementTitle = element.getTitle();
+            String elementId = element.getDataId();
+            if(elementTitle.toLowerCase().contains(item.toLowerCase())){
+                results.put(elementId, elementTitle);
             }
         }
         return results;
     }
-    public HashMap<String, List<String>> getItemsFromDB(String item){
+    public HashMap<String, HashMap<String, String>> getItemsFromDB(String item){
         List<vegData> jiomart_total_data = sqlData.getVegDataDB("jiomart");
         List<vegData> flipkart_total_data = sqlData.getVegDataDB("flipkart");
 
-        List<String> jiomart_results = searchItem(jiomart_total_data, item);
-        List<String> flipkart_results = searchItem(flipkart_total_data, item);
-        System.out.println(jiomart_results);
-        HashMap<String, List<String>> results = new HashMap<>();
+        HashMap<String, String> jiomart_results = searchItem(jiomart_total_data, item);
+        HashMap<String, String> flipkart_results = searchItem(flipkart_total_data, item);
+        System.out.println("Flipkart:"+flipkart_results);
+        System.out.println("Jiomart:"+jiomart_results);
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
         results.put("JioMart", jiomart_results);
         results.put("Flipkart", flipkart_results);
         return results;

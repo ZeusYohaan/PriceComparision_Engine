@@ -48,15 +48,17 @@ public class SqlData {
 
     public List<vegData> getVegDataQueryDB(String tableName, String DataID){
         List<vegData> vegDataList = new ArrayList<>();
+        String sqlStmnt = "SELECT * FROM " + tableName + " WHERE dataid = ?";
         try(
                 Connection connection = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/price_comparator",
                         "root", "2004"
                 );
-                PreparedStatement getVegDataStatement = connection.prepareStatement(GET_VEG_QUERY);
+
+                PreparedStatement getVegDataStatement = connection.prepareStatement(sqlStmnt);
+
         ) {
-            getVegDataStatement.setString(1, tableName);
-            getVegDataStatement.setString(2, DataID);
+            getVegDataStatement.setString(1, DataID);
             ResultSet getVegDataResult = getVegDataStatement.executeQuery();
             while (getVegDataResult.next()){
                 String dataID = getVegDataResult.getString("dataid");

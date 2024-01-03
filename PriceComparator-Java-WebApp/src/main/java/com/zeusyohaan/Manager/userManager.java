@@ -21,6 +21,8 @@ public class userManager {
         loginData loginData = new loginData();
         loginData.setUserName("admin");
         loginData.setPassword("admin");
+        userManager userManager = new userManager();
+        userManager.checkLoginDetails(loginData);
     }
 
 }

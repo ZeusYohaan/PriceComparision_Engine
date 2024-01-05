@@ -29,7 +29,10 @@ public class getMoreResultServlet extends HttpServlet {
         String vegID = request.getParameter("id");
         String title = request.getParameter("name");
         String tableName = request.getParameter("title");
-        HashMap<String, Integer> plotData = productManager.getPlotData(tableName, vegID);
+        HashMap<String, Integer> plotDataMap = productManager.getPlotData(tableName, vegID);
+        JsonUtil<HashMap<String, Integer>> jsonUtil = new JsonUtil<>();
+        String plotData = jsonUtil.toJson(plotDataMap);
+        System.out.println(plotData);
         request.setAttribute("plotData", plotData);
         request.getRequestDispatcher("results.jsp").forward(request, response);
     }

@@ -3,6 +3,8 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Iterator" %>
+<%@ page import="com.zeusyohaan.Utility.JsonUtil" %>
+<%@ page import="com.fasterxml.jackson.core.type.TypeReference" %>
 
 <html>
 <head>
@@ -59,9 +61,6 @@
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
@@ -75,7 +74,10 @@
                 type: "GET",
                 url: "getMore",
                 data: {id: id, name: name, title: title},
+                dataType: 'json',
                 success: function (response) {
+                    console.log(response);
+                    $('#modal_' + id).modal('show');
                 }
             });
         }
@@ -114,15 +116,15 @@
             <td><%= innerEntry.getValue() %></td>
             <td>
                 <button type="button" data-toggle="modal" id="<%=innerEntry.getKey()%>"
-                        data-target="#exampleModal_<%= innerEntry.getKey() %>" class="btn btn-primary"
-                        onclick="sendParameters('<%=outerKey.toLowerCase()%>', <%= innerEntry.getKey() %>, <%= innerEntry.getValue() %>)">
+                        data-target="#modal_<%= innerEntry.getKey() %>" class="btn btn-primary"
+                        onclick="sendParameters('<%=outerKey.toLowerCase()%>', '<%= innerEntry.getKey() %>', '<%= innerEntry.getValue() %>')">
                     Show More
                 </button>
             </td>
         </tr>
 
         <!-- Modal for each entry -->
-        <div class="modal fade" id="<%= innerEntry.getKey() %>" tabindex="-1" role="dialog"
+        <div class="modal fade" id="modal_<%= innerEntry.getKey() %>" tabindex="-1" role="dialog"
              aria-labelledby="exampleModalLabel_<%= innerEntry.getKey() %>" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -136,35 +138,39 @@
                     <div class="modal-body">
                         <!-- Include your modal content here -->
                         <%
-                            HashMap<String, Integer> plotData = (HashMap<String, Integer>)request.getAttribute("plotData");
-                            if(plotData!=null){
+                            JsonUtil<HashMap<String, Integer>> jsonUtil = new JsonUtil<>();
+                            String plotDataJson = (String) request.getAttribute("plotData");
+
+                            if(plotDataJson!=null){
+                                TypeReference<HashMap<String, Integer>> typeReference = new TypeReference<>() {};
+                                HashMap<String, Integer> plotData = jsonUtil.fromJsonMap(plotDataJson, typeReference);
                                 Iterator<Map.Entry<String, Integer>> iterator = plotData.entrySet().iterator();
                                 while (iterator.hasNext()){
                                     Map.Entry<String, Integer> element = iterator.next();
                                     String date = element.getKey();
                                     String price = ""+element.getValue();
                         %>
-                                    <div class="container">
-                                        <h1 class=""><%= innerEntry.getKey() %></h1>
-                                        <table class="table-bordered">
-                                            <caption><strong>Products</strong></caption>
-                                            <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Price</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td><%=date%></td>
-                                                <td><%=price%></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                            <%}
-                            }else {
-                                %>
+                        <div class="container">
+                            <h1 class=""><%= innerEntry.getKey() %></h1>
+                            <table class="table-bordered">
+                                <caption><strong>Products</strong></caption>
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Price</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><%=date%></td>
+                                    <td><%=price%></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <%}
+                        }else {
+                        %>
 
                         <div class="container mt-4">
                             <p>No results found.</p>

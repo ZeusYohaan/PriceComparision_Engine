@@ -1,6 +1,7 @@
 package com.zeusyohaan.Utility;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonUtil<T> {
@@ -12,4 +13,9 @@ public class JsonUtil<T> {
     public T fromJson(String json, Class<T> type) throws JsonProcessingException {
         return objectMapper.readValue(json, type);
     }
+
+    public T fromJsonMap(String json, TypeReference<T> typeReference) throws JsonProcessingException {
+        return objectMapper.readValue(json, typeReference);
+    }
+
 }

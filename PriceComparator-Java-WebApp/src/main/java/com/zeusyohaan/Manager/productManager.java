@@ -17,7 +17,6 @@ public class productManager {
             String price = items.getPrice().substring(1);
             plotData.put(items.getDate(), Integer.parseInt(price));
         }
-        System.out.println(plotData);
         return plotData;
     }
 
